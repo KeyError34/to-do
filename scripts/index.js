@@ -317,15 +317,15 @@ const myBtn = document.querySelector(".btn");
 // запрос из url строки 
 // https://jsonplaceholder.typicode.com/users?username=Bret&eemail=Sincere@april.biz
 
-const url =
-  "https://jsonplaceholder.typicode.com/users?username=Bret&email=Sincere@april.biz";
+// const url =
+//   "https://jsonplaceholder.typicode.com/users?username=Bret&email=Sincere@april.biz";
 
-myBtn.addEventListener("click", () => {
-    fetch(url)
-  .then(response => response.json()) // Преобразует ответ в формат JSON
-  .then(user => console.log(user[0].name)) // Выводит данные в консоль
-  .catch(error => console.error('Error:', error)); // Обрабатывает возможные ошибки
-})
+// myBtn.addEventListener("click", () => {
+//     fetch(url)
+//   .then(response => response.json()) // Преобразует ответ в формат JSON
+//   .then(user => console.log(user[0].name)) // Выводит данные в консоль
+//   .catch(error => console.error('Error:', error)); // Обрабатывает возможные ошибки
+// })
 
 // =======================all metode
 // // ### 1. GET
