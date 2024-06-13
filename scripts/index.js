@@ -11,7 +11,7 @@ const clearBtn = document.querySelector(".clearBtn"); // Находим кноп
 const listOfEntry = document.querySelector(".listOfEntry"); // Находим список задач
 const filterButtons = document.querySelectorAll(".filterBtn"); // Находим все кнопки фильтров
 const editBtn = document.querySelector(".editBtn"); // Находим кнопку редактирования задачи
-// const searchResults = document.querySelector(".searchResults"); // Находим элемент для результатов поиска
+
 
 
 
@@ -27,29 +27,51 @@ function dateDisplay() {
   currentDate.innerHTML = formattedDate; // Отображаем текущую дату
 }
 
-// Функция создания задачи
 function createTask(task) {
-  const liContainer = document.createElement("li"); // Создаем элемент списка
-  const checkbox = document.createElement("input"); // Создаем элемент чекбокса
-  const taskTitle = document.createElement("h3"); // Создаем элемент заголовка задачи
-  const taskData = document.createElement("p"); // Создаем элемент для отображения даты задачи
+    const liContainer = document.createElement("li"); // Создаем элемент списка
+  
+    const infoDiv = document.createElement("div"); // Создаем контейнер для информации о задаче
+    infoDiv.classList.add("task-info"); // Добавляем класс для стилизации
+  
+    const taskData = document.createElement("p"); // Создаем элемент для отображения даты задачи
+    taskData.textContent = task.date; // Устанавливаем текст даты задачи
+  
+    const taskTitle = document.createElement("h3"); // Создаем элемент заголовка задачи
+    taskTitle.textContent = task.description; // Устанавливаем текст заголовка задачи
+  
+    const checkbox = document.createElement("input"); // Создаем элемент чекбокса
+    checkbox.setAttribute("type", "checkbox"); // Устанавливаем тип элемента как чекбокс
+    checkbox.classList.add("checkbox"); // Добавляем класс чекбоксу
+    checkbox.style.width = "20px" 
+    checkbox.style.height = "20px"
+   
+    
 
-  taskTitle.textContent = task.description; // Устанавливаем текст заголовка задачи
-  taskData.textContent = task.date; // Устанавливаем текст даты задачи
-  checkbox.setAttribute("type", "checkbox"); // Устанавливаем тип элемента как чекбокс
-  checkbox.classList.add("checkbox"); // Добавляем класс чекбоксу
-  taskTitle.classList.add("task-title"); // Добавляем класс заголовку задачи
-
-  liContainer.append(checkbox, taskTitle, taskData); // Добавляем чекбокс, заголовок и дату в элемент списка
-  listOfEntry.append(liContainer); // Добавляем элемент списка в список задач
-
-  // Обработка изменения состояния чекбокса
+    infoDiv.append(taskData, taskTitle); // Добавляем дату и заголовок задачи в контейнер информации
+    liContainer.append(checkbox,infoDiv ); // Добавляем контейнер информации и чекбокс в элемент списка
+    liContainer.classList.add("listOfEntrychilds")
+    liContainer.style.borderRadius = "28px"
+    listOfEntry.append(liContainer); // Добавляем элемент списка в список задач
+  
+    // Обработка изменения состояния чекбокса
   checkbox.addEventListener("change", () => {
     task.completed = checkbox.checked; // Обновляем статус выполнения задачи
-    taskTitle.style.textDecoration = checkbox.checked ? "line-through" : "none"; // Перечеркиваем текст, если задача выполнена
+
+    // Перечеркиваем текст и добавляем прозрачность при выполнении задачи
+    if (checkbox.checked) {
+      taskTitle.style.textDecoration = "line-through";
+      taskTitle.style.opacity = 0.5; // Пример прозрачности (можно изменять от 0 до 1)
+      taskData.style.opacity = 0.5; // Пример прозрачности (можно изменять от 0 до 1)
+    } else {
+      taskTitle.style.textDecoration = "none";
+      taskData.style.opacity = 1; // Сбрасываем прозрачность при отмене выполнения задачи
+
+      taskTitle.style.opacity = 1; // Сбрасываем прозрачность при отмене выполнения задачи
+    }
+
     saveTasks(); // Сохраняем задачи в localStorage
   });
-}
+  }
 
 // Функция генерации уникального ID
 let taskIdCounter = 1; // Глобальная переменная для хранения текущего номера задачи
@@ -148,5 +170,6 @@ searchBtn.addEventListener("click", () => {
     const userInputValue = searchBar.value;
     const tasksList = JSON.parse(localStorage.getItem("tasks")) || [];
     searchTasks(tasksList, userInputValue);
+    searchBar.value = ""
 });
 });
