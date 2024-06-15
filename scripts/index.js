@@ -1,175 +1,281 @@
+const currentDate = document.querySelector(".currentDate");
+const searchBar = document.querySelector(".searchBar");
+const searchBtn = document.querySelector(".searchBtn");
+const generationForm = document.querySelector(".generationForm");
+const description = document.querySelector(".description");
+const date = document.querySelector(".date");
+const addBtn = document.querySelector(".addBtn");
+const clearBtn = document.querySelector(".clearBtn");
+const listOfEntry = document.querySelector(".listOfEntry");
+const filterButtons = document.querySelectorAll(".filterBtn");
+const editBtn = document.querySelector(".editBtn");
 
-const currentDate = document.querySelector(".currentDate"); // Находим элемент для текущей даты
-const searchBar = document.querySelector(".searchBar"); // Находим элемент поисковой строки
-const searchBtn = document.querySelector(".searchBtn"); // Находим кнопку поиска
-const generationForm = document.querySelector(".generationForm"); // Находим форму создания задач
-const description = document.querySelector(".description"); // Находим поле для ввода описания задачи
-const date = document.querySelector(".date"); // Находим поле для ввода даты
+const container = document.querySelector(".container");
+const editContainer = document.querySelector(".editContainer");
 
-const addBtn = document.querySelector(".addBtn"); // Находим кнопку добавления задачи
-const clearBtn = document.querySelector(".clearBtn"); // Находим кнопку очистки формы
-const listOfEntry = document.querySelector(".listOfEntry"); // Находим список задач
-const filterButtons = document.querySelectorAll(".filterBtn"); // Находим все кнопки фильтров
-const editBtn = document.querySelector(".editBtn"); // Находим кнопку редактирования задачи
+const editListOfEntry = document.querySelector(".editListOfEntryChenges");
+const saveBtn = document.querySelector(".saveBtn");
+const cancelBtn = document.querySelector(".cancelBtn");
 
+const deleteTaskBtns = document.querySelectorAll(".deleteTaskBtn");
 
-
-
-// Функция отображения текущей даты
 function dateDisplay() {
-  const today = new Date(); // Создаем объект текущей даты
-  const dayOfWeek = today.toLocaleDateString("en-EN", { weekday: "long" }); // Получаем день недели
-  const dayOfMonth = today.toLocaleDateString("en-EN", { day: "numeric" }); // Получаем день месяца
-  const month = today.toLocaleDateString("en-EN", { month: "long" }); // Получаем название месяца
-
-  const formattedDate = `${dayOfWeek}<br>${dayOfMonth} ${month}`; // Форматируем строку даты
-
-  currentDate.innerHTML = formattedDate; // Отображаем текущую дату
+  const today = new Date();
+  const dayOfWeek = today.toLocaleDateString("en-EN", { weekday: "long" });
+  const dayOfMonth = today.toLocaleDateString("en-EN", { day: "numeric" });
+  const month = today.toLocaleDateString("en-EN", { month: "long" });
+  const formattedDate = `${dayOfWeek}<br>${dayOfMonth} ${month}`;
+  currentDate.innerHTML = formattedDate;
 }
 
 function createTask(task) {
-    const liContainer = document.createElement("li"); // Создаем элемент списка
-  
-    const infoDiv = document.createElement("div"); // Создаем контейнер для информации о задаче
-    infoDiv.classList.add("task-info"); // Добавляем класс для стилизации
-  
-    const taskData = document.createElement("p"); // Создаем элемент для отображения даты задачи
-    taskData.textContent = task.date; // Устанавливаем текст даты задачи
-  
-    const taskTitle = document.createElement("h3"); // Создаем элемент заголовка задачи
-    taskTitle.textContent = task.description; // Устанавливаем текст заголовка задачи
-  
-    const checkbox = document.createElement("input"); // Создаем элемент чекбокса
-    checkbox.setAttribute("type", "checkbox"); // Устанавливаем тип элемента как чекбокс
-    checkbox.classList.add("checkbox"); // Добавляем класс чекбоксу
-    checkbox.style.width = "20px" 
-    checkbox.style.height = "20px"
-   
-    
+  const liContainer = document.createElement("li");
+  const infoDiv = document.createElement("div");
+  infoDiv.classList.add("task-info");
 
-    infoDiv.append(taskData, taskTitle); // Добавляем дату и заголовок задачи в контейнер информации
-    liContainer.append(checkbox,infoDiv ); // Добавляем контейнер информации и чекбокс в элемент списка
-    liContainer.classList.add("listOfEntrychilds")
-    liContainer.style.borderRadius = "28px"
-    listOfEntry.append(liContainer); // Добавляем элемент списка в список задач
-  
-    // Обработка изменения состояния чекбокса
-  checkbox.addEventListener("change", () => {
-    task.completed = checkbox.checked; // Обновляем статус выполнения задачи
+  const taskData = document.createElement("p");
+  taskData.textContent = task.date;
 
-    // Перечеркиваем текст и добавляем прозрачность при выполнении задачи
-    if (checkbox.checked) {
-      taskTitle.style.textDecoration = "line-through";
-      taskTitle.style.opacity = 0.5; // Пример прозрачности (можно изменять от 0 до 1)
-      taskData.style.opacity = 0.5; // Пример прозрачности (можно изменять от 0 до 1)
-    } else {
-      taskTitle.style.textDecoration = "none";
-      taskData.style.opacity = 1; // Сбрасываем прозрачность при отмене выполнения задачи
+  const taskTitle = document.createElement("h3");
+  taskTitle.textContent = task.description;
 
-      taskTitle.style.opacity = 1; // Сбрасываем прозрачность при отмене выполнения задачи
-    }
+  const checkbox = document.createElement("input");
+  checkbox.setAttribute("type", "checkbox");
+  checkbox.classList.add("checkbox");
+  checkbox.style.width = "20px";
+  checkbox.style.height = "20px";
+  const deleteTaskBtn = document.createElement("button");
+  deleteTaskBtn.innerHTML = "delete";
+  deleteTaskBtn.setAttribute("class", "deleteTaskBtn");
 
-    saveTasks(); // Сохраняем задачи в localStorage
-  });
+  if (task.completed) {
+    taskTitle.style.textDecoration = "line-through";
+    taskTitle.style.opacity = 0.5;
+    taskData.style.opacity = 0.5;
+    checkbox.checked = true;
   }
 
-// Функция генерации уникального ID
-let taskIdCounter = 1; // Глобальная переменная для хранения текущего номера задачи
-function generateUniqueId() {
-  return String(taskIdCounter++); // Возвращаем текущий номер задачи и увеличиваем его на 1
-}
+  infoDiv.append(taskData, taskTitle);
+  liContainer.append(checkbox, infoDiv);
+  liContainer.classList.add("listOfEntrychilds");
+  liContainer.style.borderRadius = "28px";
 
-// Функция сохранения задач в localStorage
-function saveTasks() {
-  const tasks = Array.from(listOfEntry.children).map(li => {
-    const checkbox = li.querySelector(".checkbox"); // Находим чекбокс
-    const taskTitle = li.querySelector("h3").textContent; // Находим заголовок задачи
-    const taskData = li.querySelector("p").textContent; // Находим дату задачи
-    return {
-      id: generateUniqueId(), // Генерируем уникальный ID для задачи
-      description: taskTitle, // Получаем описание задачи
-      date: taskData, // Получаем дату задачи
-      completed: checkbox.checked, // Получаем статус выполнения задачи
-    };
+  if (task.completed) {
+    liContainer.classList.add("completed-task");
+  } else {
+    liContainer.classList.add("active-task");
+  }
+
+  listOfEntry.append(liContainer);
+
+  checkbox.addEventListener("change", () => {
+    task.completed = checkbox.checked;
+
+    if (checkbox.checked) {
+      taskTitle.style.textDecoration = "line-through";
+      taskTitle.style.opacity = 0.5;
+
+      taskData.style.opacity = 0.5;
+      liContainer.classList.remove("active-task");
+      liContainer.classList.add("completed-task");
+    } else {
+      taskTitle.style.textDecoration = "none";
+      taskTitle.style.opacity = 1;
+      taskData.style.opacity = 1;
+      liContainer.classList.remove("completed-task");
+      liContainer.classList.add("active-task");
+    }
+
+    saveTasks();
   });
-  localStorage.setItem("tasks", JSON.stringify(tasks)); // Сохраняем задачи в localStorage
+}
+function loadEditTasks() {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  editListOfEntry.innerHTML = "";
+  tasks.forEach((task) => {
+    const liContainer = document.createElement("li");
+    const descriptionInput = document.createElement("input");
+    descriptionInput.type = "text";
+    descriptionInput.value = task.description;
+    const dateInput = document.createElement("input");
+    dateInput.type = "date";
+    dateInput.value = task.date;
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = task.completed;
+
+    const deleteTaskBtn = document.createElement("button");
+    deleteTaskBtn.innerHTML = "delete";
+    deleteTaskBtn.setAttribute("class", "deleteTaskBtn");
+
+    deleteTaskBtn.addEventListener("click", () => {
+      const item = deleteTaskBtn.closest("li");
+      item.remove();
+      saveEditTasks();
+    });
+
+    liContainer.append(descriptionInput, dateInput, checkbox, deleteTaskBtn);
+    editListOfEntry.appendChild(liContainer);
+  });
+}
+let taskIdCounter = 1;
+
+function generateUniqueId() {
+  return String(taskIdCounter++);
 }
 
-
-// Функция загрузки задач из localStorage
-function loadTasks() {
-  const tasks = JSON.parse(localStorage.getItem("tasks")) || []; // Получаем задачи из localStorage
-  tasks.forEach(createTask); // Создаем задачи из localStorage
-}
-
-// Функция добавления новой задачи
 function addTask(description, date) {
   const task = {
-    id: generateUniqueId(), // Генерируем уникальный ID для задачи
-    description: description, // Устанавливаем описание задачи
-    date: date, // Устанавливаем дату задачи
-    completed: false, // Устанавливаем статус выполнения задачи
+    id: generateUniqueId(),
+    description: description,
+    date: date,
+    completed: false,
   };
-  createTask(task); // Создаем задачу
-  saveTasks(); // Сохраняем задачи в localStorage
+  createTask(task);
+  saveTasks();
 }
 
-// Функция поиска задач
 function searchTasks(tasksList, value) {
-    const filteredTasks = tasksList.filter(task =>
-        task.description.toLowerCase().includes(value.toLowerCase()) // Фильтруем задачи по введенному значению
-    );
-    listOfEntry.innerHTML = ""; // Очищаем предыдущие задачи
+  const filteredTasks = tasksList.filter((task) =>
+    task.description.toLowerCase().includes(value.toLowerCase())
+  );
+  listOfEntry.innerHTML = "";
 
-    if (filteredTasks.length > 0) {
-        filteredTasks.forEach(createTask);
-    } else {
-        const noResults = document.createElement("li");
-        noResults.textContent = "Нет вариантов";
-        listOfEntry.appendChild(noResults);
+  if (filteredTasks.length > 0) {
+    filteredTasks.forEach(createTask);
+  } else {
+    const noResults = document.createElement("li");
+    noResults.textContent = "no relevant tasks";
+    listOfEntry.appendChild(noResults);
+  }
+}
+
+function filterTasks(filter) {
+  const tasksList = JSON.parse(localStorage.getItem("tasks")) || [];
+
+  listOfEntry.innerHTML = "";
+
+  tasksList.forEach((task) => {
+    if (
+      filter === "all" ||
+      (filter === "active" && !task.completed) ||
+      (filter === "completed" && task.completed)
+    ) {
+      createTask(task);
     }
+  });
+
+  const listItems = document.querySelectorAll(".listOfEntry > li");
+  listItems.forEach((item) => {
+    item.classList.add("listOfEntrychilds");
+    item.style.borderRadius = "28px";
+  });
+}
+
+function loadTasks() {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks.forEach((task) => {
+    createTask(task);
+  });
+}
+
+function saveTasks() {
+  const tasks = Array.from(listOfEntry.children).map((li) => {
+    const checkbox = li.querySelector(".checkbox");
+    const taskTitle = li.querySelector("h3").textContent;
+    const taskData = li.querySelector("p").textContent;
+    const completed = li.classList.contains("completed-task");
+    return {
+      id: generateUniqueId(),
+      description: taskTitle,
+      date: taskData,
+      completed: completed,
+    };
+  });
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function saveEditTasks() {
+  const tasks = Array.from(editListOfEntry.children).map((li) => {
+    const descriptionInput = li.querySelector("input[type='text']");
+    const dateInput = li.querySelector("input[type='date']");
+    const checkbox = li.querySelector("input[type='checkbox']");
+    return {
+      id: generateUniqueId(),
+      description: descriptionInput.value,
+      date: dateInput.value,
+      completed: checkbox.checked,
+    };
+  });
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  loadTasks();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  dateDisplay(); // Отображаем текущую дату
-  loadTasks(); // Загружаем задачи из localStorage
+  dateDisplay();
+  loadTasks();
 
   generationForm.addEventListener("submit", (event) => {
     event.preventDefault();
     if (description.value === "" || date.value === "") {
-      alert("Fill in all fields"); // Проверяем, что все поля заполнены
+      alert("Fill in all fields");
     } else {
-      addTask(description.value, date.value); // Добавляем новую задачу
-      description.value = ""; // Очищаем поле описания
-      date.value = ""; // Очищаем поле даты
+      addTask(description.value, date.value);
+      description.value = "";
+      date.value = "";
     }
   });
 
-  date.type = "text"; // Скрываем дату при загрузке страницы
+  date.type = "text";
 
-  // При фокусировке на поле ввода даты
   date.addEventListener("focus", () => {
-    date.type = "date"; // Изменяем тип поля на "date"
-    date.click(); // Отображаем встроенный календарь
+    date.type = "date";
+    date.click();
   });
 
-  // При разфокусировке с поля ввода даты
   date.addEventListener("blur", () => {
     setTimeout(() => {
-      date.type = "text"; // Возвращаем тип поля на "text"
-    }, 100); // Задержка перед изменением типа поля ввода
+      date.type = "text";
+    }, 100);
   });
 
   searchBar.addEventListener("input", (event) => {
     const userInputValue = event.target.value;
     const tasksList = JSON.parse(localStorage.getItem("tasks")) || [];
     searchTasks(tasksList, userInputValue);
-});
+  });
 
-searchBtn.addEventListener("click", () => {
+  searchBtn.addEventListener("click", () => {
     const userInputValue = searchBar.value;
     const tasksList = JSON.parse(localStorage.getItem("tasks")) || [];
     searchTasks(tasksList, userInputValue);
-    searchBar.value = ""
-});
+    searchBar.value = "";
+  });
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const filter = button.dataset.filter;
+      filterTasks(filter);
+    });
+  });
+
+  editBtn.addEventListener("click", () => {
+    container.style.display = "none";
+    editContainer.style.display = "block";
+    loadEditTasks();
+    // location.reload() // перезагружаемся
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    container.style.display = "block";
+    editContainer.style.display = "none";
+    location.reload(); // перезагружаемся
+  });
+
+  saveBtn.addEventListener("click", () => {
+    saveEditTasks();
+    container.style.display = "block";
+    editContainer.style.display = "none";
+    location.reload(); 
+  });
 });
